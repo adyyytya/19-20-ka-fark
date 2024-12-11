@@ -145,20 +145,99 @@ body {
 
 .progress-bar {
     width: 300px;
-    height: 2px;
+    height: 4px;
     background: rgba(0, 255, 255, 0.1);
     margin: 1rem 0;
     position: relative;
     overflow: hidden;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
 }
 
 .progress {
     width: 0%;
     height: 100%;
-    background: var(--primary);
+    background: linear-gradient(90deg, 
+        var(--primary), 
+        #fff, 
+        var(--primary)
+    );
     position: absolute;
     left: 0;
     top: 0;
+    animation: glow 1.5s ease-in-out infinite;
+    box-shadow: 0 0 20px var(--primary);
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--primary);
+    }
+    50% {
+        box-shadow: 0 0 20px var(--primary),
+                    0 0 30px var(--primary);
+    }
+    100% {
+        box-shadow: 0 0 5px var(--primary);
+    }
+}
+
+.progress::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent
+    );
+    animation: loading 1s ease-in-out infinite;
+}
+
+@keyframes loading {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(300%);
+    }
+}
+
+.progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    animation: scan 2s ease-in-out infinite;
+}
+
+@keyframes scan {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(2px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.progress-percentage {
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-family: monospace;
+    text-shadow: 0 0 5px var(--primary);
 }
 
 .loading-details {

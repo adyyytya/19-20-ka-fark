@@ -29,11 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
         visibility: 'visible'
     });
     
-    // Enhanced loading sequence
+    // Add percentage element
+    const progressBar = document.querySelector('.progress-bar');
+    const percentageDiv = document.createElement('div');
+    percentageDiv.className = 'progress-percentage';
+    progressBar.appendChild(percentageDiv);
+
+    // Enhanced loading sequence with percentage updates
     tl.to('.progress', {
         width: '30%',
         duration: 1,
-        ease: 'power1.inOut'
+        ease: 'power1.inOut',
+        onUpdate: function() {
+            const progress = Math.round(this.progress() * 100);
+            percentageDiv.textContent = `${progress}%`;
+        }
     })
     .to('.loading-text', {
         text: {
@@ -53,7 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
     .to('.progress', {
         width: '50%',
         duration: 0.8,
-        ease: 'power1.inOut'
+        ease: 'power1.inOut',
+        onUpdate: function() {
+            const progress = Math.round(this.progress() * 100);
+            percentageDiv.textContent = `${progress}%`;
+        }
     })
     .to('.loading-details', {
         text: {
@@ -79,7 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
     .to('.progress', {
         width: '65%',
         duration: 0.8,
-        ease: 'power1.inOut'
+        ease: 'power1.inOut',
+        onUpdate: function() {
+            const progress = Math.round(this.progress() * 100);
+            percentageDiv.textContent = `${progress}%`;
+        }
     })
     .to('.loading-details', {
         text: {
@@ -105,7 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
     .to('.progress', {
         width: '85%',
         duration: 0.8,
-        ease: 'power1.inOut'
+        ease: 'power1.inOut',
+        onUpdate: function() {
+            const progress = Math.round(this.progress() * 100);
+            percentageDiv.textContent = `${progress}%`;
+        }
     })
     .to('.loading-details', {
         text: {
@@ -131,7 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
     .to('.progress', {
         width: '100%',
         duration: 0.8,
-        ease: 'power1.inOut'
+        ease: 'power1.inOut',
+        onUpdate: function() {
+            const progress = Math.round(this.progress() * 100);
+            percentageDiv.textContent = `${progress}%`;
+        }
     })
     .to('.loading-details', {
         text: {
