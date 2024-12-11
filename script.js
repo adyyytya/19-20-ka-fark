@@ -1,4 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Add music control
+    const bgMusic = new Audio('assets/happy.mp3');
+    bgMusic.loop = true;
+    let isMusicPlaying = false;
+
+    const musicBtn = document.querySelector('.music-btn');
+    musicBtn.addEventListener('click', () => {
+        if (isMusicPlaying) {
+            bgMusic.pause();
+            musicBtn.classList.remove('playing');
+        } else {
+            bgMusic.play().catch(e => console.log("Music play failed:", e));
+            musicBtn.classList.add('playing');
+        }
+        isMusicPlaying = !isMusicPlaying;
+    });
+
     // Register TextPlugin
     gsap.registerPlugin(TextPlugin);
     
@@ -172,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Fade out preloader
                 document.querySelector('.preloader').style.display = 'none';
                 console.log("Preloader hidden, starting animations"); // Debug log
-                
+
                 // Add new content animations here
                 const mainContentTimeline = gsap.timeline({
                     defaults: { 
@@ -262,6 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         opacity: 0,
                         duration: 2.5,
                         onComplete: () => {
+                            // Show the music button here, after warp effect
+                            musicBtn.classList.add('show');
+                            
                             // Fade in main content while warp is still visible
                             gsap.to(['.matrix-bg', '.glitch-container', '.content'], {
                                 opacity: 1,
