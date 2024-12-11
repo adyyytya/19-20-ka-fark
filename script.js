@@ -5,24 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tl = gsap.timeline();
     const detailsContainer = document.querySelector('.loading-details');
     
-    // Function to add new line
-    function addLoadingLine(text) {
-        const line = document.createElement('div');
-        line.className = 'loading-details-line';
-        line.textContent = text;
-        detailsContainer.appendChild(line);
-        
-        // Animate the new line
-        gsap.to(line, {
-            opacity: 1,
-            y: 0,
-            duration: 0.5
-        });
-        
-        // Auto scroll to bottom
-        detailsContainer.scrollTop = detailsContainer.scrollHeight;
-    }
-    
     // Initial states
     gsap.set(['.matrix-bg', '.glitch-container', '.content'], { 
         opacity: 0,
@@ -50,8 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             value: "INITIALIZING BIRTHDAY PROTOCOLS",
             delimiter: ""
         },
-        duration: 0.5,
-        onComplete: () => addLoadingLine("SCANNING BIRTHDAY DATABASE...")
+        duration: 0.5
     })
     .to('.loading-details', {
         text: {
