@@ -2,36 +2,145 @@ document.addEventListener('DOMContentLoaded', () => {
     // Register TextPlugin
     gsap.registerPlugin(TextPlugin);
     
-    // Preloader animation
     const tl = gsap.timeline();
+    const detailsContainer = document.querySelector('.loading-details');
+    
+    // Function to add new line
+    function addLoadingLine(text) {
+        const line = document.createElement('div');
+        line.className = 'loading-details-line';
+        line.textContent = text;
+        detailsContainer.appendChild(line);
+        
+        // Animate the new line
+        gsap.to(line, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5
+        });
+        
+        // Auto scroll to bottom
+        detailsContainer.scrollTop = detailsContainer.scrollHeight;
+    }
     
     // Initial states
     gsap.set(['.matrix-bg', '.glitch-container', '.content'], { 
         opacity: 0,
-        visibility: 'visible' // Ensure elements are visible but just transparent
+        visibility: 'visible'
     });
     
-    // Animate loading sequence
+    // Enhanced loading sequence
     tl.to('.progress', {
-        width: '100%',
-        duration: 3,
+        width: '30%',
+        duration: 1,
         ease: 'power1.inOut'
     })
     .to('.loading-text', {
         text: {
-            value: "SYSTEM READY",
+            value: "INITIALIZING BIRTHDAY PROTOCOLS",
             delimiter: ""
         },
-        duration: 1,
-        ease: "none"
+        duration: 0.5,
+        onComplete: () => addLoadingLine("SCANNING BIRTHDAY DATABASE...")
     })
     .to('.loading-details', {
         text: {
-            value: "ACCESSING BIRTHDAY PROTOCOLS...",
+            value: "SCANNING BIRTHDAY DATABASE...",
             delimiter: ""
         },
         duration: 0.5
     })
+    .to('.progress', {
+        width: '50%',
+        duration: 0.8,
+        ease: 'power1.inOut'
+    })
+    .to('.loading-details', {
+        text: {
+            value: "TARGET FOUND: HARSH BHI",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.loading-text', {
+        text: {
+            value: "ACCESSING MEMORY BANKS",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.loading-details', {
+        text: {
+            value: "LOADING SPECIAL MEMORIES...",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.progress', {
+        width: '65%',
+        duration: 0.8,
+        ease: 'power1.inOut'
+    })
+    .to('.loading-details', {
+        text: {
+            value: "COMPILING BIRTHDAY WISHES...",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.loading-text', {
+        text: {
+            value: "SYSTEM OVERRIDE DETECTED",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.loading-details', {
+        text: {
+            value: "WARNING: HAPPINESS LEVELS EXCEEDING LIMITS!",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.progress', {
+        width: '85%',
+        duration: 0.8,
+        ease: 'power1.inOut'
+    })
+    .to('.loading-details', {
+        text: {
+            value: "INITIALIZING CELEBRATION PROTOCOLS...",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.loading-text', {
+        text: {
+            value: "FINAL CHECKS IN PROGRESS",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.loading-details', {
+        text: {
+            value: "PARTY MODE: ACTIVATED",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.progress', {
+        width: '100%',
+        duration: 0.8,
+        ease: 'power1.inOut'
+    })
+    .to('.loading-details', {
+        text: {
+            value: "SYSTEM READY FOR BIRTHDAY CELEBRATION!",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to({}, { duration: 1 }) // Pause to read final messages
     .to('.preloader', {
         opacity: 0,
         duration: 0.5,
@@ -45,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 0.5
     })
     // Add a small delay before showing text
-    .to({}, { duration: 0.5 }) // This creates a pause
+    .to({}, { duration: 0.5 })
     // Then show the text elements
     .to('.glitch-container', {
         opacity: 1,
