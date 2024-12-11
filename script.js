@@ -206,43 +206,227 @@ document.addEventListener('DOMContentLoaded', () => {
         document.removeEventListener('click', continueToMain);
     });
 
-    // Matrix rain effect
+    // Matrix rain effect with ASCII art pattern
     const canvas = document.createElement('canvas');
+    // canvas.style.border = '10px solid red';
     canvas.style.position = 'fixed';
     canvas.style.top = '0';
     canvas.style.left = '0';
     canvas.style.zIndex = '-1';
     document.querySelector('.matrix-bg').appendChild(canvas);
-    
+
     const ctx = canvas.getContext('2d');
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
 
-    // Matrix rain characters
-    const chars = 'HAPPY BIRTHDAY HARSH BHI 01'.split('');
-    const fontSize = 14;
-    const columns = width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
+    // Responsive font size calculation
+    function calculateFontSize() {
+        // Base font size on screen width
+        const baseFontSize = Math.min(width / 100, 14); // Adjust these numbers to tune the scaling
+        return Math.max(8, baseFontSize); // Ensure minimum readable size
+    }
+
+    let fontSize = calculateFontSize();
+    let columns = width / fontSize;
+    let drops = Array(Math.floor(columns)).fill(1);
+
+    // Calculate pattern scaling
+    function calculatePatternScale() {
+        // Scale pattern based on screen width
+        const baseScale = width < 768 ? 0.5 : 1; // Adjust scale for mobile
+        return baseScale;
+    }
+
+    let patternScale = calculatePatternScale();
+
+    // Load and parse ASCII art
+    let asciiPattern = [];
+    let patternWidth = 0;
+    let patternHeight = 0;
+    let patternOffsetX = 0;
+
+    // Store the actual characters from the ASCII art
+    let asciiChars = new Set();
+
+    const asciiArt = `;;;;;;;;;;;;;;;;:::::::.....................................:;:;;;;:::.::.::::::.:;;:xxxxx+++xxx
+:::;;;;;;;;;;;;:;;;;;;:;::::::::::...............:;....................:::.::....:;;:+xxxxxxxxXx
+.......:::::;;;:::;;;;:::::::::::::::::;:::::::::+x;::..::::::....................:::;++xxxxxxXx
+....::...::...:....::::::::::::::;;+;+++xxxx++xxxXXxxxxxx++x+;::..........................::::;+
+:...:.::.:::..:.::..:.:::::;;;;++xxXXXX$$$$$$$xX$$XXXX$XXxXXXXXXx++;;::.:..:......:.::::::.:::::
+:::;;:::::...:::::::+++xxxxxxxxxxXX$$$$$$$$XXxXXX$$$$XXXXXX$$XXXXXXXx+++;;;;:::::.::::::::::::::
+.........::::::;;xXxXXXxxxxxxxxxXXXXXXXXXXXXXX$$$$$XXX$XX$XX$$XXX$XXXXxx+++++;;;;+;;;:;;:::::::;
+............:+xXXXXXxxxXxxxXX$$$$$$$$XXXxXXX$$$$$$XXXXXXXX$$$$X$$$$$$$$XXXxxxx+;+;;;;;;;;;;;;;::
+:::::::::::+xXXX$$$XXxXXXX$$$$$$$$$XXXXXXX$$$$$XXXXX$$X$$$X$$X$XXX$$$$$$$XXXXXXX+;:;;;;;;;;;;;;;
+:::::::::+x$$$$XXXXXX$$$$$$$$$$XXXXX$X$$$$$$XX$$$$$$$X$$$XXXX$$$$$$$$$$$$$$XX$XXXx;;;;;;:::;;::;
+:::::::;X$$$$$$$$X$$$$$$X$$$$$$X$X$$$$$$$$X$$$$$$$$$$$$$$$X$$$$$$$$$$$$$$$X$$XXXXXx::::::::::;;:
+:::::;+$$$&$$$$$$$$$$$XXX$$$$X$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$XXX;;::::::::;:
+::::;x$$$&$&$$$&$$&$$XX$&$$$$$$$$$$$$$$$$$$$&$$$$$$&&&&&&&$$$$$$$$$$$$&$$$$$$$$$$$$$XX+;::::::::
+::::+$$$$&&$$$&&$&$$XX$&$$$$$$&&&$&$$$$$&&&&&$&&&&&&&&&&$$$$$$$&&&&$$$$$$$&$$$$$&&$$$$$X;;::;;::
+::;+X$$$&&&$$&&&$&$$$&&$&&$&&&&&&$$&&&&&&&&&&&&&$&&&$&&&&$$&&&&$$$&$$&$$$$$$$$&$&$$$$$$$x;::;:::
+::;+X$$$&&$$$&&$&$$$&&$&&&&&&&&$$&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$&$$$$$$$$$$&&$$$&&$$$$$$$$x++;:::
+;;;x$$&&&&&$&&&&$$$&&&&&&&&&&&$&&&&&&$$$$$$&&&&&&&&&&&&&&&&&&$$$$$&&&&&&&&$$$$$$$$$&$$$$$$xxx+;:
+xxxX$$$&&&&&&&&&$&&&&&&&&&&&&&&$$$$$$$$$$$$$$$$$$$&&&&&&$$$$$&&&&&&&&&$$&&&&&&&&&&$$$$$$$$$$Xx+:
+xxXX$$&&&&&&&&&&&&&&&&&&&&$$$$$$$XXXXXXXXXXXXXX$$$$$$$$$$$$$$$&&&&&&&&&$$$$$$$$$$$$&$$$$$$$$$Xx+
+;;;+x$&&&&&&&&&&&&&&&&&&$$XXXXXXxxxxxxxxxXxxxxxXXXXXXXXXXXXXX$$$$&&&&&&&&&&$$$$$$$$$$$$$$$$$$$X+
+;;;+++X$&&&&&&&&&&&$$$$XXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXX$$$&&&&&&&$&$&$&$$$$$&$$$$$$$$$X
+;;+x$$$$&&&&&&&&$$XXXXxxxxxxx++++x++++++++++++++++++xxxxxxxxxxxxXX$$&&&&&&&&&$$$$$&&&$$$$$$$$XXx
+++xxXX$&&&&&&&&$$XXxxxxx+++++++++++++++++++++++++++++++++++++++xxxXX$$&&&&&&&&&&$&$$&&&&&&$$XX+x
+;;+xxX$$$&&&&&$$XXxx+++++++++++++++++++++++++++++++++++++++++++++xxxX$$$&&&&&&&&$$$$$$$$$$Xx+x+;
+;;++x$$$&&$&$$$$XXx+++++++++++++++++++++++++;++++++++++++++++++++++xxXX$$&&&&&&&&$&$$$$$XX+;;;;:
++;+xX$$&$$$&&&$$Xx++++++++++++++;++++++++++++++++++++++++++++++++++++xXX$$$$$&&&&&$$$$$$XX;;;;::
+;+;xX&$$$$$&&&$$x+++++++;;;;;;;;;;;;;;;;+;;;++++++++++++++++++++++++++xXX$$&$&&&&&&&&$$$$x;;;;::
++++xX&$$$$$&&&$X+++++++;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;++++++++++++++xX$$&$$$&&&&&&$$$$+;:;:::
++++xX&&$$$&&&&$+++++++;;;;+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;++++++++++xX$$&&$$$&&&&&$$$++;;::::
++++xX$&$$$$&&$x++++x++xx+xxxxx++x+++;;;;;;;;;;;;;;;;;;;;;;+;;++++++++++xx$$&&&$&$$$&&$$X;::;::::
+++++xX&&$&$&$X++xxxxxXX$$$$$$$$$$$Xxx+++;;;;;;;;;;++++++++++++++++++++++xX$&&&&&&$$&$$X+:;::::::
++++++x$&$&$$XxxXXXXXXXXXXXXXXXX$$XXXXxx++;;;+;;+++xXXX$$$$$$XXxxxxxxx++++x$&&&&$&&&&$$+:::::::::
++++++xX$$&&$xxXxxxx++++++++xxxxXXXXxxxx++++++++++xXXXXX$$$$$$$$$$$XXxXXx+x$&&$$$&&&$$;::::::::::
+++++++xX$$&XxXxxx++++++xXXXxXX$$$XXxxxx+++++++++xxxxXxXXxxxxxXXXxxxXXXxXx+X$&$$&&&$X;:::::::::::
++++++++x$$$x++x++++xX++++xxx+xxxX$$$Xxx+++++++++xxxxxxxxxx++++++++++xxXxxxX$&$$&&$X;::::::::::::
+++++++++X$$x+++x+xX+xX$$&$$$$&XX$XXXXXx+;;++++++xxxXXXXxxxxxxx+++++++++xxxx$$$&&$x;:::::::::::::
+++++++;X$$$++++++x$$$$$X$$&&$$XXXXX$Xxx+;;+++++xxxXxxxxxxx++++++Xx++++++xxx$$&$$X+::::::::::::::
++++++++X$$&++++++xxxx++xxxxxxxxxxxxxxx++;;++++xxxxX$$$XX$$$$&&$Xx+xX++++x+x$&$$X;;::::::::::::::
+++++++xXX$$+++++++++xxxxxxxXXXXXxxx++++;;+;+++xxxxxxXXXX$$&$&$x$&$Xxx+++++x&$$$X;:::::::::::::::
+++++++xXX$x++++++;;;;;+++++++++++++++++;;;;+++xx+xxxxxxxxxxxXXXXXXXXxx++++x$$$x+::::::::::::::::
++++++++XX$++++++;;;;;;;;;;++;;;+++++++;;;+;+++++++++++xxxXxxxxxxxxx+++++++x$$XX+::::::::::::::::
+;;+++++xXX++++++;;;;;;;;;;;;;;;+++++++;;;+++++++++++++++++++++++++++++++++x$xXx;::::::::::::::::
+;;;;;++xxX++++++;;;;;;;;;;;;;;;;++++++;;;;++++++++++++++++++;;;;;;++++++++xXxXx:::::::::::::::::
+;;;;++;+xX+++++;;;;;;;;;;;;;;++++++++;;;;;;++++++++++++++++++;+;;;;;++++++xXxX+:::::::::::::::::
+;;;;;;;++X+++++;;;;;;;;;;;;++++;;;+;;;;;;;;;;+++++++++;;;;;;;;;;;;;;++++++Xxxx;:::::::::::::::::
+;;;;;;;;+X+++++;+;;;;;;;;+++++;;;;;;;;;;;;:;;;+++++++++;;;;;;;;;;+;+++++++Xxx+::::::::::::::::::
+;++;;;;;+X+++++++;;;;+++++++++++++++;;;;;;;;;;;;;;;;+++++;;;;;;;;+;+++++++X++;::::::::::::::::::
+;;;;;;+++x++++++++++++++++x+++++xXXx++++++++++++++++++++++;;;;;;;+;;+++++xXx+;::::::::::::::::::
+;;;;;;;;;x++++++++++++++xx+++++++xxxx+++++++xxxxXx++++++++++;;;;+++++++++Xx+;:::;;::::::::::::::
+;;;;;;;;;xx++++++++++++x++++++++++xXXxxxxxxxxxxxx++++++++++++++++++++++++X++;;;;;;::::::::::::::
++;+++++;+x+++++++++++++xxxxxx+x+xxxxxxxXXXxXxxx++++++++++++++++++++++++++X+;;;;;;:::::::::::::::
+Xxxxxxxxxx+++++++++++++xxXXxx+xxxxxxxxxxxxxxxxx++++++++++x+++++++++++++++x;;;;;;;:::::::::::::::
+XXXXXXXXXxx+++++++++++xXXXXXxxxx++++++++++++x+xx+xx+xxxxxxx+++++++++++++xx;;;;;;;:::::::::::::::
+XXXXXXXXXXXxx+++++++++xxxxxxxX$$XX$XXxxxxxxxxx+++++xxxxXxxxx++++++++++++X+;;;;;;::::::::::::::::
+XXXXXXXXXXxxx+++++++++++++++x+++++++++++x++xxxxXX$$X$XXXxxx++++++++++x+xx;;;;;;;::::::::::::::::
+XXXXXXXXXXXXxx++++++++++++++;++++++++++++++++xxxxxxxxxxXXXx++++++++++xxX;;;;;;;:::::::::::::::::
+XXXXXXXXXXXXXxx+++++++++++++;;;++x+++++++++++++++++++++xxx++++++++++xxX+;;;;;;;:::::::::::::::::
+$$$XXXXXXXXXXXXxx++++++++++++++;++++x++x++++++++++++++++++++++++x+xxxXx+;;;;;;::::::::::::::::::
+$$$XxXx+;:....;Xx+++++++++++++;+++++x+++++++++++++++++++++++++++xxxxxxx;;;;;;;::::::::::::::::::
+x;..::......:;+XXxxx+++++++++++++++++++x+x++++++++++++++++++++++xxxxx++;;;;;;;::::::::::::::::::
+.:::::::::::;+xXxxxXxxx+++++;+++++++++++++++++++++++++++++++++xxxXx+++;;;;;;;;;;;;;;;:::::::::::
+:::::::::.::;+xXx+xXXXxxxx+++++++++++++++++++++++++++++++xxxxxxXx+:xx+;;;;;;;;;;;;;;;;;;;;::::::
+:::::::..:::;++$x+++xXXXxxxxxxx+++++++++++++++++++++++++xxxxxXXx+X:+x++;;;;;;;;;;;;;;;;;;;;;;;;;
+:::::...:::::;+$xx++++xXXXXXxxxxx+++xxx+++++++++++++xxxxXXXXxx++x$:...:+xxxxxxxxx+++;;;;;;;;;;;;
+:......::::::;+$xx+++++xX$$XXXXXxxxxxxxxxxxxxxxxxxxxxxXXXXxxxxxxX$:.:::..:;xxXXXXXXXXxxxx+;;;;;;
+......::::::::X$Xx+++++++xxX$$$$XXXXXxxxxxxxxxXXXXXXXX$Xxxxxxxxx$X:..:.::....:xxXXXXXXXXXXXXxxx+
+......:::::::;&$Xxx+++++++++xxXXX$$$$$XXXXXXXX$XXXXXXXxxxxxxxxxX&+:...:....::::.+XXXXXXXXXXXXXXX
+.......::::::+$$Xxx++++++++++xxxxxxXXXXXXXXXXXXXXxxxxxxxxxxxxxx$&;..........:..::.:xXXXXXXXXXXXX
+......:::::::+$$Xxxx+++++++++++xxxxxxxxxxxxxxxxxxxxx++++++xxxxX&X:...........::...:.:xXXXXXXXXXX
+........:::::XXXXxxx++++++++++++x+++xxxxxxxxx+++++x++++++xxxxX$&+:............::..::..;XXXXXXXXX
+........::::;XXXXxxxx++++++++++++++++x+++x+++++++++++++++xxxxX$&;...............::::....;XXXXXXX
+...:....::::+XXxxxxxx++++++++++++++++++++++++++++++++++++xxxX$$;:.......:........::::....:xXXXXX
+...::.....::;xxxxxxxx+++++++++++++++++++++++++++++++++++xxxXXX::.................::::....:.+XXXX`; 
+
+    // Initialize the pattern and collect unique characters
+    asciiPattern = asciiArt.split('\n').map(line => {
+        const chars = line.split('');
+        chars.forEach(char => {
+            if (char !== ' ') asciiChars.add(char);
+        });
+        return chars;
+    });
+
+    patternWidth = Math.max(...asciiPattern.map(line => line.length));
+    patternHeight = asciiPattern.length;
+    patternOffsetX = Math.floor((columns - patternWidth) / 2);
+    if (patternOffsetX < 0) patternOffsetX = 0;
+
+    function isPartOfPattern(x, y) {
+        if (!asciiPattern.length) return false;
+        
+        // Adjust pattern position for different screen sizes
+        const scaledPatternWidth = patternWidth * patternScale;
+        const patternOffsetX = Math.floor((columns - scaledPatternWidth) / 2);
+        
+        const patternX = Math.floor(x - patternOffsetX);
+        const patternY = Math.floor(y * patternScale) % patternHeight;
+        
+        if (patternX < 0 || patternX >= patternWidth) return false;
+        if (!asciiPattern[patternY]) return false;
+        
+        return asciiPattern[patternY][patternX] !== ' ' && 
+               asciiPattern[patternY][patternX] !== undefined;
+    }
+
+    function getCharacterAt(x, y) {
+        // Adjust pattern position for different screen sizes
+        const scaledPatternWidth = patternWidth * patternScale;
+        const patternOffsetX = Math.floor((columns - scaledPatternWidth) / 2);
+        
+        const patternX = Math.floor(x - patternOffsetX);
+        const patternY = Math.floor(y * patternScale) % patternHeight;
+        
+        if (patternX >= 0 && patternX < patternWidth && asciiPattern[patternY]) {
+            return asciiPattern[patternY][patternX] || '.';
+        }
+        return '.';
+    }
 
     function drawMatrix() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         ctx.fillRect(0, 0, width, height);
         
-        ctx.fillStyle = '#0F0';
-        ctx.font = fontSize + 'px monospace';
-        
         for (let i = 0; i < drops.length; i++) {
-            const text = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            const isPattern = isPartOfPattern(i, drops[i]);
             
-            if (drops[i] * fontSize > height && Math.random() > 0.975) {
+            if (isPattern) {
+                const char = getCharacterAt(i, drops[i]);
+                ctx.fillStyle = '#00ff00';
+                ctx.font = `bold ${fontSize}px monospace`;
+                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                
+                const persistentChar = getCharacterAt(i, Math.floor(drops[i]));
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+                ctx.fillText(persistentChar, i * fontSize, Math.floor(drops[i]) * fontSize);
+                
+                drops[i] += 0.1;
+            } else {
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.1)';
+                ctx.font = `${fontSize}px monospace`;
+                ctx.fillText('.', i * fontSize, drops[i] * fontSize);
+                
+                drops[i] += 0.5;
+            }
+            
+            if (drops[i] * fontSize > height) {
                 drops[i] = 0;
             }
-            drops[i]++;
+        }
+        
+        // Draw persistent pattern overlay with responsive positioning
+        for (let i = 0; i < drops.length; i++) {
+            for (let y = 0; y < height / fontSize; y++) {
+                if (isPartOfPattern(i, y)) {
+                    const char = getCharacterAt(i, y);
+                    ctx.fillStyle = 'rgba(0, 255, 0, 0.15)';
+                    ctx.font = `bold ${fontSize}px monospace`;
+                    ctx.fillText(char, i * fontSize, y * fontSize);
+                }
+            }
         }
     }
 
-    setInterval(drawMatrix, 33);
+    // Enhanced resize handler
+    window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        
+        // Recalculate responsive values
+        fontSize = calculateFontSize();
+        columns = width / fontSize;
+        drops = Array(Math.floor(columns)).fill(1);
+        patternScale = calculatePatternScale();
+        
+        // Force immediate redraw
+        drawMatrix();
+    });
+
+    setInterval(drawMatrix, 50);
 
     // Button activation
     const activateButton = document.getElementById('activateButton');
