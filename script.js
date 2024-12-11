@@ -159,19 +159,44 @@ document.addEventListener('DOMContentLoaded', () => {
     .to('.preloader', {
         opacity: 0,
         duration: 0.5,
+        onStart: () => {
+            startWarpTransition();
+        },
         onComplete: () => {
-            document.querySelector('.preloader').style.display = 'none';
-            // Make main content visible
-            gsap.to(['.matrix-bg', '.glitch-container', '.content'], {
-                opacity: 1,
-                duration: 0.5,
-                stagger: 0.2
-            });
-            // Create and play background music
-            const bgMusic = new Audio('https://dl.dropboxusercontent.com/s/h7pdq5hk3j5m0vf/matrix-entrance.mp3');
-            bgMusic.loop = true;
-            bgMusic.volume = 0.5;
-            bgMusic.play().catch(e => console.log("Audio play failed:", e));
+            setTimeout(() => {
+                // Fade out preloader
+                document.querySelector('.preloader').style.display = 'none';
+                
+                // First, start fading in the matrix background slightly
+                gsap.to('.matrix-bg', {
+                    opacity: 0.3,
+                    duration: 2,
+                    ease: "power2.inOut"
+                });
+
+                // Then begin fading out warp while fading in content
+                setTimeout(() => {
+                    // Smoothly fade out the warp effect
+                    gsap.to(warpContainer, {
+                        opacity: 0,
+                        duration: 2.5,
+                        onComplete: () => {
+                            // Fade in main content while warp is still visible
+                            gsap.to(['.matrix-bg', '.glitch-container', '.content'], {
+                                opacity: 1,
+                                duration: 1.5,
+                                stagger: 0.2
+                            });
+
+                            // Start background music
+                            const bgMusic = new Audio('https://dl.dropboxusercontent.com/s/h7pdq5hk3j5m0vf/matrix-entrance.mp3');
+                            bgMusic.loop = true;
+                            bgMusic.volume = 0.5;
+                            bgMusic.play().catch(e => console.log("Audio play failed:", e));
+                        }
+                    });
+                }, 2000); // Warp effect duration
+            }, PORTAL_CONFIG.duration); // Use configured duration
         }
     });
 
@@ -253,5 +278,120 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setTimeout(() => particle.remove(), 5000);
         }
+    }
+
+    // Add warp transition container
+    const warpContainer = document.createElement('div');
+    warpContainer.className = 'warp-transition';
+    document.body.appendChild(warpContainer);
+
+    // Portal configuration
+    const PORTAL_CONFIG = {
+        duration: 900,        // Duration of portal effect in milliseconds
+        starCount: 15000,      // Number of stars
+        portalLength: 2000,    // Length of the portal tunnel
+        startingDepth: -1000,  // Starting depth of stars
+        maxWarpSpeed: 45,      // Maximum speed of travel
+        acceleration: 0.4,     // How quickly it reaches max speed
+        starSize: 2,          // Size of stars
+        starOpacity: 0.8,     // Opacity of stars
+        cameraMovement: 0.5    // Amount of camera sway (0 to disable)
+    };
+
+    // Three.js warp speed effect
+    function createWarpEffect() {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, PORTAL_CONFIG.portalLength * 1.5);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        warpContainer.appendChild(renderer.domElement);
+
+        // Create stars with more density in the center
+        const starsGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+        for (let i = 0; i < PORTAL_CONFIG.starCount; i++) {
+            // Create a tunnel effect by concentrating stars in the center
+            const radius = Math.random() * Math.random() * PORTAL_CONFIG.portalLength / 2;
+            const theta = Math.random() * 2 * Math.PI;
+            const y = (Math.random() - 0.5) * PORTAL_CONFIG.portalLength / 2;
+            
+            const x = radius * Math.cos(theta);
+            const z = radius * Math.sin(theta) + PORTAL_CONFIG.startingDepth;
+            
+            starVertices.push(x, y, z);
+        }
+        starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        
+        const starsMaterial = new THREE.PointsMaterial({
+            color: 0x00ff00, // Matrix green
+            size: PORTAL_CONFIG.starSize,
+            transparent: true,
+            opacity: PORTAL_CONFIG.starOpacity,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const starField = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(starField);
+        
+        camera.position.z = 1;
+        
+        let warpSpeed = 0;
+        
+        function animate() {
+            const animationId = requestAnimationFrame(animate);
+            
+            if (warpSpeed < PORTAL_CONFIG.maxWarpSpeed) {
+                warpSpeed += PORTAL_CONFIG.acceleration;
+            }
+            
+            const positions = starsGeometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i + 2] += warpSpeed;
+                
+                // Create infinite tunnel effect
+                if (positions[i + 2] > 200) {
+                    const radius = Math.random() * Math.random() * PORTAL_CONFIG.portalLength / 2;
+                    const theta = Math.random() * 2 * Math.PI;
+                    
+                    positions[i] = radius * Math.cos(theta);
+                    positions[i + 1] = (Math.random() - 0.5) * PORTAL_CONFIG.portalLength / 2;
+                    positions[i + 2] = PORTAL_CONFIG.startingDepth;
+                }
+            }
+            starsGeometry.attributes.position.needsUpdate = true;
+            
+            // Add camera movement
+            if (PORTAL_CONFIG.cameraMovement > 0) {
+                camera.position.x = Math.sin(Date.now() * 0.0001) * PORTAL_CONFIG.cameraMovement;
+                camera.position.y = Math.cos(Date.now() * 0.0001) * PORTAL_CONFIG.cameraMovement;
+                camera.lookAt(scene.position);
+            }
+            
+            renderer.render(scene, camera);
+            
+            if (warpContainer.style.display === 'none') {
+                cancelAnimationFrame(animationId);
+                renderer.dispose();
+            }
+        }
+        
+        animate();
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
+
+    // Update the startWarpTransition function
+    function startWarpTransition() {
+        warpContainer.style.display = 'block';
+        createWarpEffect();
+        
+        // Play warp sound
+        const warpSound = new Audio('assets/entrance.mp3');
+        warpSound.volume = 1;
+        warpSound.play().catch(e => console.log("Warp sound failed:", e));
     }
 });
