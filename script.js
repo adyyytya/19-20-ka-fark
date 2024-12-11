@@ -161,12 +161,53 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 0.5,
         onStart: () => {
             startWarpTransition();
+            console.log("Starting warp transition"); // Debug log
         },
         onComplete: () => {
+            console.log("Preloader fade complete"); // Debug log
             setTimeout(() => {
                 // Fade out preloader
                 document.querySelector('.preloader').style.display = 'none';
+                console.log("Preloader hidden, starting animations"); // Debug log
                 
+                // Add new content animations here
+                const mainContentTimeline = gsap.timeline({
+                    defaults: { 
+                        ease: "power2.out",
+                        duration: 1
+                    }
+                });
+
+                // First set everything invisible
+                gsap.set(['.terminal-text', '.glitch-text', '.status-text', '.cyber-message-small'], {
+                    opacity: 0,
+                    y: 20
+                });
+
+                // Then animate them in
+                mainContentTimeline
+                    .to('.terminal-text', {
+                        y: 0,
+                        opacity: 1,
+                        duration: .4,
+                        delay: 3.4
+                    })
+                    .to('.glitch-text', {
+                        scale: 1,
+                        opacity: 1,
+                        duration: .3,
+                    })
+                    .to('.status-text', {
+                        y: 0,
+                        opacity: 1,
+                        duration: .3,
+                    })
+                    .to('.cyber-message-small', {
+                        opacity: 1,
+                        y: 0,
+                        duration: .3,
+                    });
+
                 // First, start fading in the matrix background slightly
                 gsap.to('.matrix-bg', {
                     opacity: 0.3,
@@ -248,25 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Store the actual characters from the ASCII art
     let asciiChars = new Set();
 
-    const asciiArt = `;;;;;;;;;;;;;;;;:::::::.....................................:;:;;;;:::.::.::::::.:;;:xxxxx+++xxx
-:::;;;;;;;;;;;;:;;;;;;:;::::::::::...............:;....................:::.::....:;;:+xxxxxxxxXx
-.......:::::;;;:::;;;;:::::::::::::::::;:::::::::+x;::..::::::....................:::;++xxxxxxXx
-....::...::...:....::::::::::::::;;+;+++xxxx++xxxXXxxxxxx++x+;::..........................::::;+
-:...:.::.:::..:.::..:.:::::;;;;++xxXXXX$$$$$$$xX$$XXXX$XXxXXXXXXx++;;::.:..:......:.::::::.:::::
-:::;;:::::...:::::::+++xxxxxxxxxxXX$$$$$$$$XXxXXX$$$$XXXXXX$$XXXXXXXx+++;;;;:::::.::::::::::::::
-.........::::::;;xXxXXXxxxxxxxxxXXXXXXXXXXXXXX$$$$$XXX$XX$XX$$XXX$XXXXxx+++++;;;;+;;;:;;:::::::;
-............:+xXXXXXxxxXxxxXX$$$$$$$$XXXxXXX$$$$$$XXXXXXXX$$$$X$$$$$$$$XXXxxxx+;+;;;;;;;;;;;;;::
-:::::::::::+xXXX$$$XXxXXXX$$$$$$$$$XXXXXXX$$$$$XXXXX$$X$$$X$$X$XXX$$$$$$$XXXXXXX+;:;;;;;;;;;;;;;
-:::::::::+x$$$$XXXXXX$$$$$$$$$$XXXXX$X$$$$$$XX$$$$$$$X$$$XXXX$$$$$$$$$$$$$$XX$XXXx;;;;;;:::;;::;
-:::::::;X$$$$$$$$X$$$$$$X$$$$$$X$X$$$$$$$$X$$$$$$$$$$$$$$$X$$$$$$$$$$$$$$$X$$XXXXXx::::::::::;;:
-:::::;+$$$&$$$$$$$$$$$XXX$$$$X$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$XXX;;::::::::;:
-::::;x$$$&$&$$$&$$&$$XX$&$$$$$$$$$$$$$$$$$$$&$$$$$$&&&&&&&$$$$$$$$$$$$&$$$$$$$$$$$$$XX+;::::::::
-::::+$$$$&&$$$&&$&$$XX$&$$$$$$&&&$&$$$$$&&&&&$&&&&&&&&&&$$$$$$$&&&&$$$$$$$&$$$$$&&$$$$$X;;::;;::
-::;+X$$$&&&$$&&&$&$$$&&$&&$&&&&&&$$&&&&&&&&&&&&&$&&&$&&&&$$&&&&$$$&$$&$$$$$$$$&$&$$$$$$$x;::;:::
-::;+X$$$&&$$$&&$&$$$&&$&&&&&&&&$$&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$&$$$$$$$$$$&&$$$&&$$$$$$$$x++;:::
-;;;x$$&&&&&$&&&&$$$&&&&&&&&&&&$&&&&&&$$$$$$&&&&&&&&&&&&&&&&&&$$$$$&&&&&&&&$$$$$$$$$&$$$$$$xxx+;:
-xxxX$$$&&&&&&&&&$&&&&&&&&&&&&&&$$$$$$$$$$$$$$$$$$$&&&&&&$$$$$&&&&&&&&&$$&&&&&&&&&&$$$$$$$$$$Xx+:
-xxXX$$&&&&&&&&&&&&&&&&&&&&$$$$$$$XXXXXXXXXXXXXX$$$$$$$$$$$$$$$&&&&&&&&&$$$$$$$$$$$$&$$$$$$$$$Xx+
+    const asciiArt = `xxXX$$&&&&&&&&&&&&&&&&&&&&$$$$$$$XXXXXXXXXXXXXX$$$$$$$$$$$$$$$&&&&&&&&&$$$$$$$$$$$$&$$$$$$$$$Xx+
 ;;;+x$&&&&&&&&&&&&&&&&&&$$XXXXXXxxxxxxxxxXxxxxxXXXXXXXXXXXXXX$$$$&&&&&&&&&&$$$$$$$$$$$$$$$$$$$X+
 ;;;+++X$&&&&&&&&&&&$$$$XXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXX$$$&&&&&&&$&$&$&$$$$$&$$$$$$$$$X
 ;;+x$$$$&&&&&&&&$$XXXXxxxxxxx++++x++++++++++++++++++xxxxxxxxxxxxXX$$&&&&&&&&&$$$$$&&&$$$$$$$$XXx
@@ -315,12 +338,7 @@ x;..::......:;+XXxxx+++++++++++++++++++x+x++++++++++++++++++++++xxxxx++;;;;;;;::
 :......::::::;+$xx+++++xX$$XXXXXxxxxxxxxxxxxxxxxxxxxxxXXXXxxxxxxX$:.:::..:;xxXXXXXXXXxxxx+;;;;;;
 ......::::::::X$Xx+++++++xxX$$$$XXXXXxxxxxxxxxXXXXXXXX$Xxxxxxxxx$X:..:.::....:xxXXXXXXXXXXXXxxx+
 ......:::::::;&$Xxx+++++++++xxXXX$$$$$XXXXXXXX$XXXXXXXxxxxxxxxxX&+:...:....::::.+XXXXXXXXXXXXXXX
-.......::::::+$$Xxx++++++++++xxxxxxXXXXXXXXXXXXXXxxxxxxxxxxxxxx$&;..........:..::.:xXXXXXXXXXXXX
-......:::::::+$$Xxxx+++++++++++xxxxxxxxxxxxxxxxxxxxx++++++xxxxX&X:...........::...:.:xXXXXXXXXXX
-........:::::XXXXxxx++++++++++++x+++xxxxxxxxx+++++x++++++xxxxX$&+:............::..::..;XXXXXXXXX
-........::::;XXXXxxxx++++++++++++++++x+++x+++++++++++++++xxxxX$&;...............::::....;XXXXXXX
-...:....::::+XXxxxxxx++++++++++++++++++++++++++++++++++++xxxX$$;:.......:........::::....:xXXXXX
-...::.....::;xxxxxxxx+++++++++++++++++++++++++++++++++++xxxXXX::.................::::....:.+XXXX`; 
+.......::::::+$$Xxx++++++++++xxxxxxXXXXXXXXXXXXXXxxxxxxxxxxxxxx$&;..........:..::.:xXXXXXXXXXXXX`; 
 
     // Initialize the pattern and collect unique characters
     asciiPattern = asciiArt.split('\n').map(line => {
