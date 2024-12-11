@@ -147,33 +147,38 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         duration: 0.5
     })
-    .to({}, { duration: 1 }) // Pause to read final messages
+    .to({}, { duration: 1 }) // Pause to read message
+    .to('.loading-details', {
+        text: {
+            value: "CLICK ANYWHERE TO ENTER >>",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .addPause() // Pause the timeline here
     .to('.preloader', {
         opacity: 0,
         duration: 0.5,
         onComplete: () => {
             document.querySelector('.preloader').style.display = 'none';
+            // Make main content visible
+            gsap.to(['.matrix-bg', '.glitch-container', '.content'], {
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.2
+            });
+            // Create and play background music
+            const bgMusic = new Audio('https://dl.dropboxusercontent.com/s/h7pdq5hk3j5m0vf/matrix-entrance.mp3');
+            bgMusic.loop = true;
+            bgMusic.volume = 0.5;
+            bgMusic.play().catch(e => console.log("Audio play failed:", e));
         }
-    })
-    // First show matrix rain
-    .to('.matrix-bg', { 
-        opacity: 1,
-        duration: 0.5
-    })
-    // Add a small delay before showing text
-    .to({}, { duration: 0.5 })
-    // Then show the text elements
-    .to('.glitch-container', {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out"
-    })
-    .to('.content', {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: "power2.out"
+    });
+
+    // Add click handler to continue the timeline
+    document.addEventListener('click', function continueToMain() {
+        tl.resume(); // Continue the timeline
+        document.removeEventListener('click', continueToMain);
     });
 
     // Matrix rain effect
