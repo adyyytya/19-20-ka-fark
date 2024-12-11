@@ -141,6 +141,7 @@ body {
     color: var(--primary);
     font-size: 2rem;
     margin-bottom: 2rem;
+    text-align: center;
 }
 
 .progress-bar {

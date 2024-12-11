@@ -29,14 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .to('.loading-text', {
         text: {
-            value: "INITIALIZING BIRTHDAY PROTOCOLS",
+            value: "CONNECTING ACROSS MILES",
             delimiter: ""
         },
         duration: 0.5
     })
     .to('.loading-details', {
         text: {
-            value: "SCANNING BIRTHDAY DATABASE...",
+            value: "LOCATING BIRTHDAY STAR...",
             delimiter: ""
         },
         duration: 0.5
@@ -52,21 +52,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .to('.loading-details', {
         text: {
-            value: "TARGET FOUND: HARSH BHI",
+            value: "FOUND: HARSH BHI",
             delimiter: ""
         },
         duration: 1
     })
     .to('.loading-text', {
         text: {
-            value: "ACCESSING MEMORY BANKS",
+            value: "GATHERING GOOD VIBES",
             delimiter: ""
         },
         duration: 0.5
     })
     .to('.loading-details', {
         text: {
-            value: "LOADING SPECIAL MEMORIES...",
+            value: "COLLECTING BIRTHDAY CHEERS...",
             delimiter: ""
         },
         duration: 0.5
@@ -82,21 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .to('.loading-details', {
         text: {
-            value: "COMPILING BIRTHDAY WISHES...",
+            value: "PREPARING SPECIAL MESSAGE...",
             delimiter: ""
         },
         duration: 0.5
     })
     .to('.loading-text', {
         text: {
-            value: "SYSTEM OVERRIDE DETECTED",
+            value: "DISTANCE NO BARRIER",
             delimiter: ""
         },
         duration: 0.5
     })
     .to('.loading-details', {
         text: {
-            value: "WARNING: HAPPINESS LEVELS EXCEEDING LIMITS!",
+            value: "CELEBRATION MODE: ACTIVATED!",
             delimiter: ""
         },
         duration: 0.5
@@ -112,21 +112,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .to('.loading-details', {
         text: {
-            value: "INITIALIZING CELEBRATION PROTOCOLS...",
+            value: "SENDING VIRTUAL HIGH FIVE...",
             delimiter: ""
         },
         duration: 0.5
     })
     .to('.loading-text', {
         text: {
-            value: "FINAL CHECKS IN PROGRESS",
+            value: "ALMOST READY",
             delimiter: ""
         },
         duration: 0.5
     })
     .to('.loading-details', {
         text: {
-            value: "PARTY MODE: ACTIVATED",
+            value: "BIRTHDAY VIBES LOADED",
             delimiter: ""
         },
         duration: 0.5
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .to('.loading-details', {
         text: {
-            value: "SYSTEM READY FOR BIRTHDAY CELEBRATION!",
+            value: "LET'S MAKE THIS DAY AMAZING!",
             delimiter: ""
         },
         duration: 0.5
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .to({}, { duration: 1 }) // Pause to read message
     .to('.loading-details', {
         text: {
-            value: "CLICK ANYWHERE TO ENTER >>",
+            value: "CLICK TO JOIN THE CELEBRATION >>",
             delimiter: ""
         },
         duration: 0.5
@@ -432,41 +432,6 @@ x;..::......:;+XXxxx+++++++++++++++++++x+x++++++++++++++++++++++xxxxx++;;;;;;;::
 
     setInterval(drawMatrix, 50);
 
-    // Button activation
-    const activateButton = document.getElementById('activateButton');
-    activateButton.addEventListener('click', () => {
-        // Create glitch effect
-        document.body.style.animation = 'glitch 0.3s infinite';
-        
-        // Play cyberpunk-style sound
-        const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3');
-        audio.play();
-        
-        // Show hidden messages
-        const messageContainer = document.querySelector('.message-container');
-        messageContainer.classList.remove('hidden');
-        messageContainer.classList.add('show');
-        
-        // Change button text
-        activateButton.innerHTML = '<span></span><span></span><span></span><span></span>SYSTEM OVERLOADED';
-        activateButton.style.pointerEvents = 'none';
-        
-        // Create digital confetti
-        createDigitalConfetti();
-    });
-
-    function createDigitalConfetti() {
-        for (let i = 0; i < 100; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('digital-particle');
-            particle.style.left = Math.random() * 100 + 'vw';
-            particle.style.animationDelay = Math.random() * 2 + 's';
-            particle.style.background = `rgba(${Math.random() * 255}, ${Math.random() * 255}, 255, 0.8)`;
-            document.body.appendChild(particle);
-            
-            setTimeout(() => particle.remove(), 5000);
-        }
-    }
 
     // Add warp transition container
     const warpContainer = document.createElement('div');
