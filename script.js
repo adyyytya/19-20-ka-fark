@@ -498,7 +498,7 @@ x;..::......:;+XXxxx+++++++++++++++++++x+x++++++++++++++++++++++xxxxx++;;;;;;;::
 
     // Portal configuration
     const PORTAL_CONFIG = {
-        duration: 900,        // Duration of portal effect in milliseconds
+        duration: 800,        // Duration of portal effect in milliseconds
         starCount: 15000,      // Number of stars
         portalLength: 2000,    // Length of the portal tunnel
         startingDepth: -1000,  // Starting depth of stars
