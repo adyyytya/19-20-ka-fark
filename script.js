@@ -1,4 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Register TextPlugin
+    gsap.registerPlugin(TextPlugin);
+    
+    // Preloader animation
+    const tl = gsap.timeline();
+    
+    // Initial states
+    gsap.set(['.matrix-bg', '.glitch-container', '.content'], { 
+        opacity: 0,
+        visibility: 'visible' // Ensure elements are visible but just transparent
+    });
+    
+    // Animate loading sequence
+    tl.to('.progress', {
+        width: '100%',
+        duration: 3,
+        ease: 'power1.inOut'
+    })
+    .to('.loading-text', {
+        text: {
+            value: "SYSTEM READY",
+            delimiter: ""
+        },
+        duration: 1,
+        ease: "none"
+    })
+    .to('.loading-details', {
+        text: {
+            value: "ACCESSING BIRTHDAY PROTOCOLS...",
+            delimiter: ""
+        },
+        duration: 0.5
+    })
+    .to('.preloader', {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+            document.querySelector('.preloader').style.display = 'none';
+        }
+    })
+    // First show matrix rain
+    .to('.matrix-bg', { 
+        opacity: 1,
+        duration: 0.5
+    })
+    // Add a small delay before showing text
+    .to({}, { duration: 0.5 }) // This creates a pause
+    // Then show the text elements
+    .to('.glitch-container', {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power2.out"
+    })
+    .to('.content', {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "power2.out"
+    });
+
     // Matrix rain effect
     const canvas = document.createElement('canvas');
     canvas.style.position = 'fixed';
