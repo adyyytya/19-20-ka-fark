@@ -300,8 +300,6 @@ body {
     opacity: 0.9;
 }
 
-.cyber-message-small br {
-    content: "";
-    margin: 1rem;
-    display: block;
+.cyber-message-small p {
+    margin: 1rem 0;
 }

@@ -178,6 +178,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
+                // Hacker text effect function
+                const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                
+                function hackerEffect(element, finalText) {
+                    let iteration = 0;
+                    let interval = null;
+                    
+                    clearInterval(interval);
+                    
+                    interval = setInterval(() => {
+                        element.innerText = finalText
+                            .split("")
+                            .map((letter, index) => {
+                                if (index < iteration) {
+                                    return finalText[index];
+                                }
+                                return letters[Math.floor(Math.random() * 26)]
+                            })
+                            .join("");
+
+                        if (iteration >= finalText.length) {
+                            clearInterval(interval);
+                        }
+
+                        iteration += 1 / 3;
+                    }, 30);
+                }
+
                 // First set everything invisible
                 gsap.set(['.terminal-text', '.glitch-text', '.status-text', '.cyber-message-small'], {
                     opacity: 0,
@@ -195,7 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     .to('.glitch-text', {
                         scale: 1,
                         opacity: 1,
-                        duration: .3,
+                        duration: .5,
+                        onComplete: () => {
+                            // Apply hacker effect to glitch text
+                            const glitchText = document.querySelector('.glitch-text');
+                            hackerEffect(glitchText, "HARSH BHI");
+                        }
                     })
                     .to('.status-text', {
                         y: 0,
@@ -205,7 +238,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     .to('.cyber-message-small', {
                         opacity: 1,
                         y: 0,
-                        duration: .3,
+                        duration: .6,
+                        onComplete: () => {
+                            // Apply hacker effect to each paragraph
+                            const paragraphs = document.querySelectorAll('.cyber-message-small p');
+                            paragraphs.forEach((p, index) => {
+                                setTimeout(() => {
+                                    hackerEffect(p, p.innerText);
+                                }, index * 500); // Stagger the effect for each paragraph
+                            });
+                        }
                     });
 
                 // First, start fading in the matrix background slightly
