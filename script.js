@@ -438,17 +438,17 @@ x;..::......:;+XXxxx+++++++++++++++++++x+x++++++++++++++++++++++xxxxx++;;;;;;;::
             
             if (isPattern) {
                 const char = getCharacterAt(randomX, randomY);
-                ctx.fillStyle = '#00ff00';
+                ctx.fillStyle = 'yellow';
                 ctx.font = `bold ${fontSize}px monospace`;
                 ctx.fillText(char, i * fontSize, drops[i] * fontSize);
                 
                 const persistentChar = getCharacterAt(randomX, Math.floor(drops[i]));
-                ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
                 ctx.fillText(persistentChar, i * fontSize, Math.floor(drops[i]) * fontSize);
                 
                 drops[i] += 0.1;
             } else {
-                ctx.fillStyle = 'rgba(0, 255, 0, 0.1)';
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
                 ctx.font = `${fontSize}px monospace`;
                 ctx.fillText('.', i * fontSize, drops[i] * fontSize);
                 
@@ -465,7 +465,7 @@ x;..::......:;+XXxxx+++++++++++++++++++x+x++++++++++++++++++++++xxxxx++;;;;;;;::
             for (let y = 0; y < height / fontSize; y++) {
                 if (isPartOfPattern(i, y)) {
                     const char = getCharacterAt(i, y);
-                    ctx.fillStyle = 'rgba(0, 255, 0, 0.15)';
+                    ctx.fillStyle = 'rgba(0, 140, 255, 0.15)';
                     ctx.font = `bold ${fontSize}px monospace`;
                     ctx.fillText(char, i * fontSize, y * fontSize);
                 }
@@ -534,7 +534,7 @@ x;..::......:;+XXxxx+++++++++++++++++++x+x++++++++++++++++++++++xxxxx++;;;;;;;::
         starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
         
         const starsMaterial = new THREE.PointsMaterial({
-            color: 0x00ff00, // Matrix green
+            color: new THREE.Color('#fff'),  // Cyan
             size: PORTAL_CONFIG.starSize,
             transparent: true,
             opacity: PORTAL_CONFIG.starOpacity,
