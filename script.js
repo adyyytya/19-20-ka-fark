@@ -149,6 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .to({}, { duration: 1 }) // Pause to read message
     .to('.loading-details', {
+        textDecoration: 'underline',
+        textUnderlineOffset: '3px',
+        textDecorationColor: 'white',
         text: {
             value: "CLICK TO JOIN THE CELEBRATION >>",
             delimiter: ""
@@ -224,11 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         scale: 1,
                         opacity: 1,
                         duration: .5,
-                        onComplete: () => {
-                            // Apply hacker effect to glitch text
-                            const glitchText = document.querySelector('.glitch-text');
-                            hackerEffect(glitchText, "HARSH BHI");
-                        }
                     })
                     .to('.status-text', {
                         y: 0,

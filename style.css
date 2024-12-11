@@ -291,15 +291,16 @@ body {
 }
 
 .cyber-message-small {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     line-height: 1;
     text-align: center;
     color: white;
-    text-shadow: 0 0 3px blue;
+    text-shadow: 0 0 3px black;
     letter-spacing: -1px;
     opacity: 0.9;
 }
 
 .cyber-message-small p {
     margin: 1rem 0;
+    text-transform: uppercase;
 }
