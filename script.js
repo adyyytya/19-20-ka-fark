@@ -164,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         duration: 0.5
     })
-    .to({}, { duration: 1 }) // Pause to read message
     .to('.loading-details', {
         textDecoration: 'underline',
         textUnderlineOffset: '3px',
@@ -173,9 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
             value: "CLICK TO JOIN THE CELEBRATION >>",
             delimiter: ""
         },
-        duration: 0.5
+        duration: 0.5,
+        onComplete: () => {
+            isReadyForClick = true;
+        }
     })
-    .addPause() // Pause the timeline here
+    .addPause()
     .to('.preloader', {
         opacity: 0,
         duration: 0.5,
@@ -302,9 +304,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Add click handler to continue the timeline
-    document.addEventListener('click', function continueToMain() {
-        tl.resume(); // Continue the timeline
-        document.removeEventListener('click', continueToMain);
+    let isReadyForClick = false;  // Flag to track when clicking is allowed
+
+    // Modified click handler
+    document.addEventListener('click', function continueToMain(e) {
+        if (isReadyForClick) {
+            tl.resume();  // Continue the timeline
+            document.removeEventListener('click', continueToMain);
+            isReadyForClick = false;  // Reset the flag
+        }
     });
 
     // Matrix rain effect with ASCII art pattern
