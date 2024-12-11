@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             value: "TARGET FOUND: HARSH BHI",
             delimiter: ""
         },
-        duration: 0.5
+        duration: 1
     })
     .to('.loading-text', {
         text: {
