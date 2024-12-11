@@ -5,6 +5,11 @@
     --glitch-offset: 3px;
 }
 
+@font-face {
+    font-family: 'Neue Machina';
+    src: url('assets/NeueMachina-Light.otf');
+}
+
 @keyframes glitch {
     0% {
         text-shadow: 2px 0 var(--primary), -2px 0 var(--secondary);
