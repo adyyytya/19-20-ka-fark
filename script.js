@@ -372,15 +372,19 @@ x;..::......:;+XXxxx+++++++++++++++++++x+x++++++++++++++++++++++xxxxx++;;;;;;;::
         ctx.fillRect(0, 0, width, height);
         
         for (let i = 0; i < drops.length; i++) {
-            const isPattern = isPartOfPattern(i, drops[i]);
+            // Randomly select a character position within the pattern
+            const randomX = Math.floor(Math.random() * patternWidth);
+            const randomY = Math.floor(Math.random() * patternHeight);
+            
+            const isPattern = isPartOfPattern(randomX, randomY);
             
             if (isPattern) {
-                const char = getCharacterAt(i, drops[i]);
+                const char = getCharacterAt(randomX, randomY);
                 ctx.fillStyle = '#00ff00';
                 ctx.font = `bold ${fontSize}px monospace`;
                 ctx.fillText(char, i * fontSize, drops[i] * fontSize);
                 
-                const persistentChar = getCharacterAt(i, Math.floor(drops[i]));
+                const persistentChar = getCharacterAt(randomX, Math.floor(drops[i]));
                 ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
                 ctx.fillText(persistentChar, i * fontSize, Math.floor(drops[i]) * fontSize);
                 
